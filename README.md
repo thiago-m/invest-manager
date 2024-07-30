@@ -1,40 +1,31 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Sobre o projeto Invest-Manager
+Este é um projeto utilizando typescript, nestjs e mongoDB. Ele foi feito pensando em uma arquitetura modular seguindo o MVC e contem testes usando o Jest.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## *** Importante ***
+O projeto esta rodando com __https__, mas o certificado não esta sendo conhecido como muito seguro, então ao acessar pelo navegador, postman, insomnia ou qualquer outro método deve-se colocar para não validar o certificado ou permitir mesmo falando que não esta seguro, caso queira rodar com __http__ para não ter esse transtorno é só remover a constante __httpsOptions__ e o seu uso na função __NestFactory.create<NestExpressApplication>(AppModule, { httpsOptions })__ no arquivo __src/main.js__
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Como Rodar o Projeto
+### 1. Pré-requisitos:
+* Node.js, npm e docker-compose instalados e configurados.
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
+### 2. Clonar o Repositório:
+``` sh
+git clone https://github.com/thiago-m/invest-manager.git
 ```
+### 3. Instalar Dependências:
+``` sh
+npm install
+```
+### 4. Criar imagem Docker:
+``` sh
+docker-compose build
+```
+### 5. Executar a aplicação:
 
-## Running the app
+``` sh
+# Rodar projeto no Docker
+docker-compose up
 
-```bash
 # development
 $ npm run start
 
@@ -45,7 +36,7 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Testes
 
 ```bash
 # unit tests
@@ -58,16 +49,85 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Documentação da aplicação
+A documentação foi feita usando o swagger, pode ser acessada neste [link](https://localhost:3000/api/docs/):
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Funcionalidades
+- __https:__ A aplicação esta usando um certificado para usar https 
+- __Rate limit:__ A aplicação utiliza o __express-rate-limit__ para proteger de ataque de força bruta 
+- __Cadastro de usuário:__  O projeto oferece um endpoint __POST__ para cadastro de usuários 
+- __Pegar usuário:__ O projeto oferece um endpoint __GET__ para recuperar dados do usuário logado 
+- __Login de usuário:__ O projeto oferece um endpoint __POST__ para o login do usuário 
+- __Cadastro de investimento:__ O projeto oferece um endpoint __POST__ para cadastro de investimento do usuário logado, quando cadastrado já é feito o calculo dos proventos recebidos de acordo com a data do investimento 
+- __Cron para adicionar os proventos ao investimento:__ O projeto oferece um __cron job__ que roda __todos os dias a meia noite__ para adicionar os proventos de cada investimento de acordo com a data para receber
+- __Listar investimentos do usuário:__ O projeto oferece um endpoint __GET__ para listar os investimentos cadastrados do usuário, é possível também usar paginação passando os parâmetros __limit__ e __page__, também é possível usar o parâmetro __active__ para filtrar apenas investimentos ativos ou inativos 
+- __Pegar um investimento do usuário pelo Id:__ O projeto oferece um endpoint __GET__ para pegar um investimento especifico do usuário 
+- __Retirar um investimento do usuário:__ O projeto oferece um endpoint __PATCH__ para remoção do investimento do usuário 
 
-## Stay in touch
+## Anatomia da aplicação
+A aplicação foi feito pensando na arquitetura __MVC__
+````
+src/
+├── common/
+│   └── guards/
+│        └── jwt-auth.guard.ts
+├── config/
+│   └── configuration.ts
+├── modules/
+│   ├── auth/
+│   │    ├── auth.controller.ts
+│   │    ├── auth.module.ts
+│   │    ├── auth.service.ts
+│   │    ├── jwt.strategy.ts
+│   │    ├── local-auth.guard.ts
+│   │    └── local.strategy.ts
+│   ├── invest/
+│   │    ├── controllers/
+│   │    │    └── invest.controller.ts
+│   │    ├── dtos/
+│   │    │    └── create.invest.dto.ts
+│   │    ├── models/
+│   │    │    └── invest.schema.ts
+│   │    ├── services/
+│   │    │    ├── calculate.service.ts
+│   │    │    ├── invest.service.ts
+│   │    │    └── monthlyIncome.service.ts
+│   │    ├── invest.modules.ts
+│   │    └── invest.repository.ts
+│   └── user/
+│        ├── controllers/
+│        │    └── user.controller.ts
+│        ├── dtos/
+│        │    └── create.user.dto.ts
+│        ├── models/
+│        │    └── user.schema.ts
+│        ├── services/
+│        │    └── user.service.ts
+│        ├── user.modules.ts
+│        └── user.repository.ts
+├── tests/
+│   ├── auth/
+│   │    ├── auth.e2e-spec.ts
+│   │    └── auth.service.spec.ts
+│   ├── invest/
+│   │    ├── invest.e2e-spec.ts
+│   │    ├── calculate.service.spec.ts
+│   │    ├── invest.service.spec.ts
+│   │    └── monthlyIncome.service.spec.ts
+│   └── user/
+│        ├── user.e2e-spec.ts
+│        └── user.service.spec.ts
+├── app.module.ts
+├── app.service.ts/
+└── main.ts/
+views/
+````
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Contribuindo
+Se você deseja contribuir com este projeto, por favor, siga estas etapas:
 
-## License
-
-Nest is [MIT licensed](LICENSE).
+1. Faça um fork do repositório
+2. Crie uma branch para a sua feature (`git checkout -b feature/NomeDaSuaFeature`)
+3. Faça commit das suas mudanças (`git commit -am 'Adicionando uma nova feature`)
+4. Faça push para a branch (`git push origin feature/NomeDaSuaFeature`)
+5. Crie um novo `Pull Request`
